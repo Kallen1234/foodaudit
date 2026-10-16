@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Food Audit - Interactive Prototype (CSCE 3055.401)</title>
+  <link rel="stylesheet" href="css/styles.css?v=3.2">
+  <style>
+    /* Grader / Dev Toolbar */
+    .dev-toolbar {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      z-index: 1000;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .dev-toolbar span {
+      color: #94A3B8;
+    }
+    .dev-toolbar button {
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+    .dev-toolbar button:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .dev-toolbar .badge-team {
+      background: #FF7A00;
+      color: #FFFFFF;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 800;
+    }
+
+    /* Wireframe Mode Toggle */
+    body.wireframe-mode .device-container {
+      filter: grayscale(100%) contrast(110%);
+    }
+    body.wireframe-mode .card-img-thumb,
+    body.wireframe-mode .swipe-card-img,
+    body.wireframe-mode .detail-hero-img {
+      filter: brightness(0.9) contrast(70%);
+      border: 2px dashed #64748B;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dev & Evaluation Quick Navigation Bar -->
+  <div class="dev-toolbar">
+    <span class="badge-team">CSCE 3055.401</span>
+    <span>The Food Audit (Phase 2 D2)</span>
+    <button onclick="window.foodAuditApp.switchView('landing')">1. Landing / Search</button>
+    <button onclick="window.foodAuditApp.switchView('swipe')">2. Swipe Discovery</button>
+    <button onclick="window.foodAuditApp.switchView('detail')">3. Detail & Audit</button>
+    <button onclick="window.foodAuditApp.switchView('compare')">4. Compare Matrix</button>
+    <button onclick="window.foodAuditApp.switchView('favorites')">5. Favorites & In-App</button>
+    <button onclick="toggleWireframeMode()">Toggle Wireframe Mode</button>
+  </div>
+
+  <!-- Mobile Device Enclosure -->
+  <div class="device-container">
+    
+    <!-- Toast Popup Notification -->
+    <div id="toast-notice" class="toast-notice">Action Complete</div>
+
+    <!-- Status Bar (iOS 9:41) -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <!-- Signal -->
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+          <rect x="0" y="8" width="2.5" height="4" rx="0.5"/>
+          <rect x="4" y="6" width="2.5" height="6" rx="0.5"/>
+          <rect x="8" y="3" width="2.5" height="9" rx="0.5"/>
+          <rect x="12" y="0" width="2.5" height="12" rx="0.5"/>
+        </svg>
+        <!-- Wifi -->
+        <svg width="15" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+          <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+        <!-- Battery -->
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor" stroke-width="1.2">
+          <rect x="1" y="1" width="18" height="9" rx="2.5"/>
+          <rect x="2.5" y="2.5" width="12" height="6" rx="1.5" fill="currentColor"/>
+          <path d="M20 4v3" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Scrollable Viewport -->
+    <div class="app-viewport">
+
+      <!-- ========================================================
+           SCREEN 01: LANDING (SEARCH & FILTER)
+      ======================================================== -->
+      <section id="screen-landing" class="view-screen active">
+        <!-- Header -->
+        <div class="app-header">
+          <div class="brand-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+            THE FOOD <span class="brand-badge">AUDIT</span>
+          </div>
+        </div>
+
+        <!-- Location Search & Detector -->
+        <div class="location-card">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="search-input" class="search-input" placeholder="Enter or detect location" />
+          </div>
+          <button id="btn-current-location" class="btn-current-location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            Use current location
+          </button>
+        </div>
+
+        <!-- Quick Filters -->
+        <div class="section-title">Quick Filters</div>
+        <div id="filter-chips-wrap" class="quick-filters-scroll">
+          <button class="filter-chip active" data-category="All">All Places</button>
+          <button class="filter-chip" data-category="Pizza">Pizza</button>
+          <button class="filter-chip" data-category="Coffee">Coffee</button>
+          <button class="filter-chip" data-category="Vegan">Vegan</button>
+          <button class="filter-chip" data-category="Tacos">Tacos</button>
+          <button class="filter-chip" data-category="Late Night">Late Night</button>
+        </div>
+
+        <!-- Recommended List -->
+        <div class="section-title">Recommended Near You</div>
+        <div id="recommended-list" class="recommended-list">
+          <!-- Injected via JavaScript -->
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SCREEN 02: SWIPE UI (DISCOVERY FEED)
+      ======================================================== -->
+      <section id="screen-swipe" class="view-screen">
+        <div class="swipe-header">
+          <div class="swipe-title">Discover ↔ Swipe</div>
+          <div id="swipe-counter" class="swipe-counter">1 / 5</div>
+        </div>
+
+        <!-- Swipe Stage Stack -->
+        <div id="swipe-stage" class="swipe-stage">
+          <!-- Top card injected via JavaScript -->
+        </div>
+
+        <!-- Swipe Controls -->
+        <div class="swipe-controls">
+          <button id="btn-skip" class="btn-skip">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            ✕ Skip
+          </button>
+          <button id="btn-save" class="btn-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            ♡ Save
+          </button>
+        </div>
+        <div class="swipe-hint">— Swipe to pass | Swipe to save —</div>
+      </section>
+
+      <!-- ========================================================
+           SCREEN 03: RESTAURANT DETAIL & AUDIT REPORT
+      ======================================================== -->
+      <section id="screen-detail" class="view-screen">
+        <div class="detail-top-nav">
+          <button id="btn-detail-back" class="btn-icon-back">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <div id="detail-nav-title" class="detail-nav-title">El Camino Taqueria</div>
+          <button class="btn-icon-back" onclick="window.foodAuditApp.showToast('Share link copied!')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          </button>
+        </div>
+
+        <div class="detail-hero-box">
+          <img id="detail-hero-img" class="detail-hero-img" src="" alt="Restaurant detail" />
+          <div id="detail-rating-pill" class="detail-rating-pill">★ 4.8 (612)</div>
+        </div>
+
+        <div id="detail-tags-row" class="detail-tags-row">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- The Food Audit Summary Box -->
+        <div class="audit-summary-panel">
+          <div class="audit-panel-header">
+            <div class="audit-panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Audit Summary
+            </div>
+            <div id="detail-synthesis-info" class="audit-synthesis-info">Synthesized from 1,240+ reviews</div>
+          </div>
+          <div id="detail-audit-points" class="audit-points-list">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <div class="detail-actions-row">
+          <button id="btn-detail-save" class="btn-action-save">♡ Save to list</button>
+          <button id="btn-detail-compare" class="btn-action-compare">+ Compare</button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SCREEN 04: COMPARISON MATRIX VIEW
+      ======================================================== -->
+      <section id="screen-compare" class="view-screen">
+        <div class="detail-top-nav">
+          <button id="btn-compare-back" class="btn-icon-back">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <div class="detail-nav-title">Audit Comparison</div>
+          <button id="btn-swap-compare" class="btn-icon-back" title="Swap Comparison Order" style="font-size: 13px; font-weight: 700; color: var(--primary);">
+            ⇄ Swap
+          </button>
+        </div>
+
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          Select any two restaurants to generate an instant head-to-head audit:
+        </p>
+
+        <!-- Interactive Comparison Selectors -->
+        <div class="compare-selector-card">
+          <div class="compare-select-col">
+            <label class="compare-label" for="compare-select-a">Restaurant 1</label>
+            <select id="compare-select-a" class="compare-dropdown"></select>
+          </div>
+          <div class="compare-vs-badge">VS</div>
+          <div class="compare-select-col">
+            <label class="compare-label" for="compare-select-b">Restaurant 2</label>
+            <select id="compare-select-b" class="compare-dropdown"></select>
+          </div>
+        </div>
+
+        <div class="comparison-table-wrap">
+          <table class="comparison-table">
+            <thead id="compare-table-header"></thead>
+            <tbody id="compare-table-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Dynamic Verdict Banner -->
+        <div id="compare-verdict-card" class="compare-verdict-card"></div>
+      </section>
+
+      <!-- ========================================================
+           SCREEN 05: FAVORITES & IN-APP AUDIT SUBMISSION
+      ======================================================== -->
+      <section id="screen-favorites" class="view-screen">
+        <div class="app-header">
+          <div class="brand-title">Your Curated Places</div>
+        </div>
+
+        <div class="section-title">Saved Restaurants</div>
+        <div id="favorites-list" class="recommended-list" style="margin-bottom: 24px;"></div>
+
+        <!-- In-App User Audit Submission Form -->
+        <div class="section-title">Submit Community Food Audit</div>
+        <div class="audit-form-card">
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;">
+            Contribute in-app feedback to update our aggregated review synthesis.
+          </p>
+          <form id="in-app-audit-form">
+            <div class="form-group">
+              <label class="form-label" for="form-select-restaurant">Select Restaurant</label>
+              <select id="form-select-restaurant" class="form-select"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-input-pro">What stood out? (Pro +)</label>
+              <input type="text" id="form-input-pro" class="form-input" placeholder="e.g., Crispy carnitas, speedy checkout" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="form-input-con">What was the drawback? (Watch-out -)</label>
+              <input type="text" id="form-input-con" class="form-input" placeholder="e.g., Packed seating during dinner" required />
+            </div>
+            <button type="submit" class="btn-current-location" style="width: 100%; justify-content: center;">
+              Submit Audit Feedback
+            </button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-tab-btn active" data-view="landing">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-tab-btn" data-view="swipe">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <span>Discover</span>
+      </button>
+      <button class="nav-tab-btn" data-view="favorites">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span>Favorites</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="js/data.js?v=3.2"></script>
+  <script src="js/app.js?v=3.2"></script>
+  <script>
+    function toggleWireframeMode() {
+      document.body.classList.toggle("wireframe-mode");
+    }
+  </script>
+</body>
+</html>

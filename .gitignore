@@ -1,0 +1,20 @@
+# Python virtual environment & dependencies
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.pyc
+requirements.txt
+
+# Submission Word documents (kept locally on disk, excluded from git/Vercel)
+*.docx
+
+# Internal generator scripts & test suite (kept locally on disk)
+scripts/
+tests/
+
+# OS & Temp
+Thumbs.db
+.DS_Store
+*.tmp

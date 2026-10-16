@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120">
+  <defs>
+    <linearGradient id="gradBrand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A00" />
+      <stop offset="100%" stop-color="#FF4500" />
+    </linearGradient>
+    <linearGradient id="gradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E232A" />
+      <stop offset="100%" stop-color="#0F1216" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#FF7A00" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Logo Mark (Shield + Fork + Audit Checkmark) -->
+  <g transform="translate(10, 10)">
+    <!-- Shield / Badge background -->
+    <path d="M 50 5 L 88 18 C 88 62 50 88 50 88 C 50 88 12 62 12 18 Z" 
+          fill="url(#gradDark)" stroke="url(#gradBrand)" stroke-width="3" filter="url(#shadow)" />
+    
+    <!-- Fork Silhouette -->
+    <path d="M 44 26 L 44 42 C 44 45 47 47 50 47 C 53 47 56 45 56 42 L 56 26 M 48 26 L 48 38 M 52 26 L 52 38 M 50 47 L 50 68" 
+          stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85"/>
+    
+    <!-- Bold Audit Checkmark -->
+    <path d="M 38 52 L 48 64 L 70 34" 
+          stroke="url(#gradBrand)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+
+  <!-- Logo Text -->
+  <g transform="translate(125, 30)">
+    <!-- Category Tag -->
+    <text x="0" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="12" font-weight="700" letter-spacing="3" fill="#FF7A00">
+      AUTHENTICATED RESTAURANT REVIEWS
+    </text>
+    
+    <!-- Main Title -->
+    <text x="0" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="34" font-weight="900" letter-spacing="-0.5" fill="#1A1E24">
+      THE FOOD <tspan fill="url(#gradBrand)">AUDIT</tspan>
+    </text>
+
+    <!-- Subtitle/Motto -->
+    <text x="0" y="72" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="11" font-weight="500" letter-spacing="1" fill="#718096">
+      SYNTHESIZED INSIGHTS • ZERO SPONSORED BIAS
+    </text>
+  </g>
+</svg>
