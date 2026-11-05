@@ -11,10 +11,6 @@
 
 ## Deliverable Files Overview
 
-### 1. Final Submission Documents (D2.1 & D2.2)
-- **`TheFoodAudit_P2_Group4.docx`**: The complete, professionally formatted MS Word report meeting all D2.1 and D2.2 criteria (100/100 points).
-- **`TheFoodAudit_P2_group4.docx`**: Identical copy adhering to lowercase filename conventions if preferred.
-
 ### 2. Functional Web Prototype
 - **`index.html`**: The full responsive single-page web prototype. Simply double-click `index.html` to open it in Chrome, Edge, or Safari!
 - **`css/styles.css`**: Complete design system with design tokens, modern card layouts, iOS status bar, and smooth view transitions.
